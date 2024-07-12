@@ -24,4 +24,14 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route ::get('/test',[HomeController::class, 'test']);
+Route ::get('/test',[HomeController::class, 'test'])->name('test');
+
+// Route::name('tracks.')->prefix('tracks')->controller(TrackController::class)->group(function() {
+//     Route::get('/', 'index')->name('index');
+//     Route::get('/create', 'create')->name('create');
+//     Route::post('/', 'store')->name('store');
+//     Route::get('/{track}', 'show')->name('show');
+//     Route::get('/{track}/edit', 'edit')->name('edit');
+//     Route::put('/{track}', 'update')->name('update');
+//     Route::delete('/{track}', 'destroy')->name('destroy');
+// });
