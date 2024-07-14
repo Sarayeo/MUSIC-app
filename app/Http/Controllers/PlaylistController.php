@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Nette\Schema\ValidationException;
-use App\Http\Requests\PlaylistRequest;
 
 class PlaylistController extends Controller
 {
@@ -20,7 +19,6 @@ class PlaylistController extends Controller
     {
         $user = auth()->user();
         $playlists = $user->playlists()->withCount(['tracks'])->get();
-        /* dd($playlists); */
         return Inertia::render('Playlist/Index', [
             'playlists' => $playlists,
         ]);
@@ -82,47 +80,27 @@ class PlaylistController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Playlist $playlist)
+    public function edit(Playlist$playlist)
     {
-    $tracks = Track::where('display', true)->orderBy('title')->get();
-    return Inertia::render('Playlist/Edit', [
-        'playlist' => $playlist->load('tracks'),
-        'tracks' => $tracks,
-    ]);
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PlaylistRequest $request, Playlist $playlist)
+    public function update(Request $request, Playlist$playlist)
     {
-
-         $tracks = Track::whereIn('uuid', $request->tracks)->where('display' , true )->get();
-                if($tracks->count() !== count($request->tracks)){
-                    throw ValidationException::withMessage(' Cette musique n \'existe pas ! ');
-               }
-
-
-        $playlist->title = $request->title;
-        $playlist->save();
-
-        $playlist->tracks()->sync($tracks->pluck('id'));
-
-        return redirect()->route('playlists.index');
-
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Playlist$playlist)
+    public function destroy(Playlist$playlist)
     {
-
-    $playlist->tracks()->detach();
         $playlist->delete();
-        return redirect()->route('playlists.index');
 
+        return redirect()->route('playlists.index');
 
     }
 }

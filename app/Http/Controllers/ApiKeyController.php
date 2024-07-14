@@ -1,53 +1,69 @@
 <?php
 
+// app/Http/Controllers/ApiKeyController.php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ApiKey;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ApiKeyController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index()
     {
-        $apiKeys = ApiKey::where('user_id', Auth::id())->get();
-        return view('apikeys.index', compact('apiKeys'));
+
+        $user = auth()->user();
+        $apiKeys = $user->apikey;
+
+        return Inertia::render('ApiKey/Index', [
+            'apikeys' => $apiKeys
+        ]);
     }
 
     public function create()
     {
-        return view('apikeys.create');
+        return Inertia::render('ApiKey/Create');
+
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required' , 'string', 'max:255'],
+
         ]);
 
-        $apiKey = new ApiKey([
-            'user_id' => Auth::id(),
-            'key' => \Str::random(40),
-            'name' => $request->name,
-            'active' => true,
-        ]);
-        $apiKey->save();
 
-        return redirect()->route('apikeys.index');
+        // Crée une nouvelle clé API pour l'utilisateur
+        $apiKey = ApiKey::create([
+            'uuid' => 'key-' .Str::uuid(),
+            'user_id' => $request->user()->id,
+            'name' => $request->name
+        ]);
+
+        response()->json($apiKey, 201);
+
+        return redirect()->route('apikey.index');
+
+
+
     }
 
-    public function destroy(ApiKey $apiKey)
+    public function destroy($apiKey)
     {
-        if ($apiKey->user_id != Auth::id()) {
-            abort(403);
+        $user = auth()->user();
+        $api = $user->apikey;
+
+        foreach ($api as $key) {
+
+            if($key['uuid'] == $apiKey) {
+                $key->delete();
+            }
         }
 
-        $apiKey->delete();
-        return redirect()->route('apikeys.index');
+        return redirect()->route('apikey.index');
+
     }
 }

@@ -1,19 +1,38 @@
 <?php
 
+use App\Http\Controllers\ApiKeyController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\TrackController;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\TrackController;
-use App\Http\Controllers\PlaylistController;
-use App\Http\Middleware\IsAdmin;
-use GuzzleHttp\Promise\TaskQueueInterface;
-use App\Http\Controllers\ApiKeyController;
+
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
+Route::get('/' , [TrackController::class, 'index'])->name('tracks.index');
 
 
-Route::get('/', [TrackController::class, 'index'])->name('tracks.index');
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
 
-Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::resource('playlists', PlaylistController::class);
+    Route::name('playlists.')->prefix('playlists')->controller(PlaylistController::class)->group(function() {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::get('/{playlist}', 'show')->name('show');
+        Route::post('/', 'store')->name('store');
+        Route::delete('/{playlist}', 'destroy')->name('destroy');
+    });
 
     Route::name('tracks.')->prefix('tracks')->controller(TrackController::class)->middleware([IsAdmin::class])->group(function() {
         Route::get('/create', 'create')->name('create');
@@ -23,11 +42,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::put('/{track}', 'update')->name('update');
         Route::delete('/{track}', 'destroy')->name('destroy');
     });
-});
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/apikeys', [ApiKeyController::class, 'index'])->name('apikeys.index');
-    Route::get('/apikeys/create', [ApiKeyController::class, 'create'])->name('apikeys.create');
-    Route::post('/apikeys', [ApiKeyController::class, 'store'])->name('apikeys.store');
-    Route::delete('/apikeys/{apiKey}', [ApiKeyController::class, 'destroy'])->name('apikeys.destroy');
+
+
+    Route::name('apikey.')->prefix('apikey')->controller(ApiKeyController::class)->group(function() {
+
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::get('/create', 'create')->name('create');
+        Route::delete('/{apikey}', 'destroy')->name('destroy');
+    });
+
+
+
+
 });

@@ -3,26 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
+use App\Models\User;
 
-class Playlist extends Model
+class ApiKey extends Model
 {
-    use HasFactory;
-
     use HasFactory;
 
     protected $fillable = [
         'id',
         'uuid',
         'user_id',
-        'title',
-
+        'name',
+        'key'
     ];
 
     public function getRouteKeyName() {
         return 'uuid';
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($apiKey) {
+            $apiKey->key = Str::random(32); // Génère une chaîne aléatoire de 32 caractères
+            $apiKey->uuid = (string)Str::uuid(); // Génère un UUID
+        });
     }
 
     public function user(): BelongsTo
@@ -30,8 +39,6 @@ class Playlist extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function tracks(): BelongsToMany
-    {
-        return $this->belongsToMany(Track::class)->withTimestamps();
-    }
+
+
 }

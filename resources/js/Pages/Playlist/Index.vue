@@ -1,58 +1,53 @@
 <template>
-
     <MusicLayout>
-
         <template #title>
-            List of playlists
+            <h1 class="text-3xl font-bold text-gray-800">My playlists</h1>
         </template>
-
         <template #action>
-            <Link :href="route('playlists.create')" class="bg-blue-300 hover:bg-blue-600 text-white font-bold rounded py-2 px-4">
-                Create a playlist
-            </Link>
+            <div class="flex space-x-4 mb-4">
+                <Link :href="route('playlists.create')" class="bg-pink-500 text-white font-bold rounded py-2 px-4 hover:bg-pink-700 transition duration-300">
+                    Create a playlist
+                </Link>
+                <Link :href="route('tracks.index')" class="bg-blue-500 text-white font-bold rounded py-2 px-4 hover:bg-blue-700 transition duration-300">
+                    Musics
+                </Link>
+            </div>
         </template>
-
         <template #content>
-            <table>
-                <thead>
-                    <tr>
-                        <td>#</td>
-                        <td>Title</td>
-                        <td>Musics number</td>
-                        <td>Created at</td>
-                        <td>Actions</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(playlist, i) in playlists" :key="playlist.uuid">
-                        <td>{{ i + 1 }}</td>
-                        <td>{{ playlist.title }}</td>
-                        <td>{{ playlist.tracks_count }} musics</td>
-                        <td>{{ playlist.created_at }}</td>
-                        <td>
-                            <Link :href="route('playlists.show', { playlist: playlist })" class="bg-blue-300 hover:bg-blue-600 text-white font-bold rounded py-2 px-4">
-                                Voir
-                            </Link>
-                            <Link :href="route('playlists.edit', { playlist: playlist })" class="bg-lime-300 hover:bg-lime-600 text-white font-bold rounded py-2 px-4">
-                                Modify
-                            </Link>
-                            <button @click="deletePlaylist(playlist.uuid)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                Delete
-                            </button>
-
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-blue-500 to-pink-500 text-white">
+                            <th class="py-2 px-4">#</th>
+                            <th class="py-2 px-4">Title</th>
+                            <th class="py-2 px-4">Musics number</th>
+                            <th class="py-2 px-4">Created at</th>
+                            <th class="py-2 px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(playlist, i) in playlists" :key="playlist.uuid" class="even:bg-gray-100">
+                            <td class="py-2 px-4 text-center">{{ i + 1 }}</td>
+                            <td class="py-2 px-4 text-center">{{ playlist.title }}</td>
+                            <td class="py-2 px-4 text-center">{{ playlist.tracks_count }} musics</td>
+                            <td class="py-2 px-4 text-center">{{ playlist.created_at }}</td>
+                            <td class="flex flex-row py-2 px-4 justify-center gap-4">
+                                <Link :href="route('playlists.show', { playlist : playlist })" class="text-blue-500 font-bold hover:underline">
+                                    Show
+                                </Link>
+                                <Link as="button" method="DELETE" :href="route('playlists.destroy', { playlist : playlist })" class="text-red-500 font-bold hover:underline">
+                                    Delete
+                                </Link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </template>
-
     </MusicLayout>
-
 </template>
 
 <script>
-
 import MusicLayout from '@/Layouts/MusicLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -65,19 +60,15 @@ export default {
     props: {
         playlists: Array,
     },
-    methods: {
-        deletePlaylist(playlistId) {
-            if (confirm('voulez vous vraiment supprimer cette playlist ?')) {
-                this.$inertia.delete(route('playlists.destroy', { playlist: playlistId }), {
-                    onSuccess: () => {
-                        
-                        this.$inertia.reload();
+}
+</script>
 
-                    }
-                });
-            }
-        }
-    }
+<style>
+body {
+    background-color: #ddc477;
 }
 
-</script>
+td {
+    background-color: #ddc477;
+}
+</style>

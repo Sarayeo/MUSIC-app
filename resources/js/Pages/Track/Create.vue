@@ -1,87 +1,110 @@
 <template>
+    <div class="bg-gradient-to-b from-blue-300 via-blue-400 to-pink-300 py-8 px-4 min-h-screen">
+        <MusicLayout>
+            <template #title>
+                <h1 class="text-4xl font-bold text-white mb-6">Create a Music</h1>
+            </template>
+            <template #action>
+                <Link :href="route('tracks.index')"
+                      class="bg-pink-600 text-white font-bold rounded py-2 px-4 hover:bg-pink-700 transition duration-300">
+                    Back
+                </Link>
+            </template>
+            <template #content>
+                <form @submit.prevent="submit" class="py-8 px-4 rounded bg-white shadow-md max-w-lg mx-auto">
+                    <!-- Title -->
+                    <div class="mb-4">
+                        <label for="title" class="block text-gray-700 text-lg font-bold mb-2">Title</label>
+                        <input id="title" v-model="form.title" type="text"
+                               class="bg-blue-500 shadow rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline w-full"
+                               :class="{ 'border-red-500': form.errors.title }" placeholder="Title">
+                        <p class="text-red-500 text-xs italic">{{ form.errors.title }}</p>
+                    </div>
 
-    <MusicLayout>
-        <template #title>
-            Create my music
-        </template>
+                    <!-- Artist -->
+                    <div class="mb-4">
+                        <label for="artist" class="block text-gray-700 text-lg font-bold mb-2">Artist</label>
+                        <input id="artist" v-model="form.artist" type="text"
+                               class="bg-blue-500 shadow rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline w-full"
+                               :class="{ 'border-red-500': form.errors.artist }" placeholder="Artist">
+                        <p class="text-red-500 text-xs italic">{{ form.errors.artist }}</p>
+                    </div>
 
-        <template #action>
-            <Link :href="route('tracks.index')" class="bg-blue-300 hover:bg-blue-600 text-white font-bold rounded py-2 px-4">
-                Return
-            </Link>
-        </template>
+                    <!-- Display -->
+                    <div class="mb-4">
+                        <label for="display" class="block text-gray-700 text-lg font-bold mb-2">Display</label>
+                        <select name="display" id="display" v-model="form.display"
+                                class="bg-blue-500 shadow rounded py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline w-full"
+                                :class="{ 'border-red-500': form.errors.display }">
+                            <option :value="true">Oui</option>
+                            <option :value="false">Non</option>
+                        </select>
+                        <p class="text-red-500 text-xs italic">{{ form.errors.display }}</p>
+                    </div>
 
-        <template #content>
-            <form @submit.prevent="submit">
-                <div class="mb-3">
-                    <label for="title" class="block text-gray-700 text-sm font-bold mb-3">Title</label>
-                    <input v-model="form.title" type="text" id="title" placeholder="Title" class="shadow border rounded py-2 px-3 text-gray-700 appearance-none leading-tight focus:outline-none focus:shadow-outline mb-5">
-                    <p class="text-red-400 text-xs italic">{{ form.errors.title }}</p>
-                </div>
+                    <!-- Image -->
+                    <div class="mb-4">
+                        <label for="image" class="block text-gray-700 text-lg font-bold mb-2">Image</label>
+                        <input @input="form.image = $event.target.files[0]" type="file" name="image" id="image"
+                               class="w-full text-gray-700">
+                        <p class="text-red-500 text-xs italic">{{ form.errors.image }}</p>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="artist" class="block text-gray-700 text-sm font-bold mb-3">Artist</label>
-                    <input v-model="form.artist" type="text" name="title" id="title" placeholder="Artist" class="shadow border rounded py-2 px-3 text-gray-700 appearance-none leading-tight focus:outline-none focus:shadow-outline mb-5">
-                    <p class="text-red-400 text-xs italic">{{ form.errors.artist }}</p>
-                </div>
+                    <!-- Audio -->
+                    <div class="mb-4">
+                        <label for="audio" class="block text-gray-700 text-lg font-bold mb-2">Audio</label>
+                        <input @input="form.music = $event.target.files[0]" type="file" name="audio" id="audio"
+                               class="w-full text-gray-700">
+                        <p class="text-red-500 text-xs italic">{{ form.errors.audio }}</p>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="display" class="block w-full text-gray-700 text-sm font-bold mb-3">Display</label>
-                    <select v-model="form.display" type="text" name="display" id="display" placeholder="display" class="shadow border rounded py-2 px-3 text-gray-700 appearance-none leading-tight focus:outline-none focus:shadow-outline mb-5">
-                        <option :value="true">YES</option>
-                        <option :value="false">NON</option>
-                    </select>
-                    <p class="text-red-400 text-xs italic">{{ form.errors.display }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <label for="image" class="block text-gray-700 text-sm font-bold mb-3">Image</label>
-                    <input @input="form.image = $event.target.files[0]" type="file" name="image" id="image">
-                    <p class="text-red-400 text-xs italic">{{ form.errors.image }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <label for="audio" class="block text-gray-700 text-sm font-bold mb-3">Music</label>
-                    <input @input="form.music = $event.target.files[0]" type="file" name="music" id="music">
-                    <p class="text-red-400 text-xs italic">{{ form.errors.music }}</p>
-                </div>
-
-                <input type="submit" value="Create music" class="bg-blue-700 hover:bg-blue-300 text-white rounded py-2 px-4"
-                       :class="[form.processing ? 'bg-gray-500' : 'bg-blue-300 hover:bg-blue-600']" :disabled="form.processing">
-
-            </form>
-
-        </template>
-
-    </MusicLayout>
-
+                    <input type="submit" value="Create"
+                           class="bg-pink-600 text-white font-bold rounded py-2 px-4 hover:bg-pink-700 transition duration-300 w-full"
+                           :class="[form.processing ? 'bg-pink-400' : 'bg-pink-600']" :disabled="form.processing">
+                </form>
+            </template>
+        </MusicLayout>
+    </div>
 </template>
 
 <script>
 import MusicLayout from '@/Layouts/MusicLayout.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link } from "@inertiajs/vue3";
 
 export default {
     name: 'Create',
     components: {
         MusicLayout,
-        Link
+        Link,
     },
     data() {
         return {
             form: this.$inertia.form({
                 title: '',
                 artist: '',
+                display: true,
                 image: null,
                 music: null,
-                display: true,
-            })
+            }),
         }
     },
     methods: {
         submit() {
-            this.form.post(route('tracks.store'))
+            this.form.post(route('tracks.store'), {
+                //preserveState: false,
+            });
         }
     }
 }
 </script>
+
+<style>
+body {
+    background-color: #3e3bea;
+}
+
+#artist {
+    background-color: #e350eb;
+    color: #cf95f6;
+}
+</style>

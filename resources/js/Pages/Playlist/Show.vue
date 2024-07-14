@@ -1,23 +1,17 @@
 <template>
-
     <MusicLayout>
-
         <template #title>
-            Title Playlist
+            My playlist: {{ playlist.title }}
         </template>
-
         <template #action>
-            <Link :href="route('playlists.index')" class="bg-lime-300 hover:bg-lime-600 text-white font-bold rounded py-2 px-4">
-                Return
+            <Link :href="route('playlists.index')" class="bg-blue-500 text-white font-bold rounded py-2 px-4 hover:bg-blue-700 transition duration-300">
+                Back
             </Link>
         </template>
-
         <template #content>
             <TrackList :tracks="tracks" />
         </template>
-
     </MusicLayout>
-
 </template>
 
 <script>

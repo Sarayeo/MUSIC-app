@@ -1,46 +1,49 @@
 <template>
+    <div class="bg-gradient-to-b from-blue-300 via-blue-400 to-pink-300 py-8 px-4 min-h-screen"> 
+        <MusicLayout>
+            <template #title>
+                <h1 class="text-4xl font-bold text-white mb-6">{{ track.title }}</h1>
+            </template>
 
-    <MusicLayout>
-        <template #title>
-            Modify a music
-        </template>
+            <template #action>
+                <Link :href="route('tracks.index')"
+                      class="bg-pink-600 text-white font-bold rounded py-2 px-4 hover:bg-pink-700 transition duration-300">
+                    Back
+                </Link>
+            </template>
 
-        <template #action>
-            <Link :href="route('tracks.index')" class="bg-blue-300 hover:bg-blue-600 text-white font-bold rounded py-2 px-4">
-                Return
-            </Link>
-        </template>
-
-        <template #content>
-            <form @submit.prevent="submit">
-                <div class="mb-3">
-                    <label for="title" class="block text-gray-700 text-sm font-bold mb-3">Title</label>
-                    <input v-model="form.title" type="text" id="title" placeholder="Title" class="shadow border rounded py-2 px-3 text-gray-700 appearance-none leading-tight focus:outline-none focus:shadow-outline mb-5">
-                    <p class="text-red-400 text-xs italic">{{ form.errors.title }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <label for="artist" class="block text-gray-700 text-sm font-bold mb-3">Artist</label>
-                    <input v-model="form.artist" type="text" name="title" id="title" placeholder="Artist" class="shadow border rounded py-2 px-3 text-gray-700 appearance-none leading-tight focus:outline-none focus:shadow-outline mb-5">
-                    <p class="text-red-400 text-xs italic">{{ form.errors.artist }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <label for="display" class="block text-gray-700 text-sm font-bold mb-3">Display</label>
-                    <select v-model="form.display" type="text" name="display" id="display" placeholder="display" class="shadow border rounded py-2 px-3 text-gray-700 appearance-none leading-tight focus:outline-none focus:shadow-outline mb-5">
-                        <option :value="true">Oui</option>
-                        <option :value="false">Non</option>
-                    </select>
-                    <p class="text-red-400 text-xs italic">{{ form.errors.display }}</p>
-                </div>
-
-                <input type="submit" value="Modify a music" class="bg-blue-300 hover:bg-blue-600 rounded py-2 px-4" :disabled="form.processing">
-
-            </form>
-        </template>
-
-    </MusicLayout>
-
+            <template #content>
+                <form @submit.prevent="edit" class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+                    <div class="mb-4">
+                        <label for="title" class="block text-gray-700 text-lg font-bold mb-2">Title</label>
+                        <input
+                            class="bg-blue-500 text-white shadow rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline mb-2 w-full"
+                            id="title" v-model="form.title" type="text">
+                        <p class="text-red-500">{{ form.errors.title }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="artist" class="block text-gray-700 text-lg font-bold mb-2">Artist</label>
+                        <input
+                            class="bg-blue-500 text-white shadow rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline mb-2 w-full"
+                            id="artist" name="artist" v-model="form.artist" type="text">
+                        <p class="text-red-500">{{ form.errors.artist }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="display" class="block text-gray-700 text-lg font-bold mb-2">Display</label>
+                        <select
+                            class="w-full bg-blue-500 text-white shadow rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline mb-2"
+                            name="display" id="display" v-model="form.display">
+                            <option :value="true">Oui</option>
+                            <option :value="false">Non</option>
+                        </select>
+                        <p class="text-red-500">{{ form.errors.display }}</p>
+                    </div>
+                    <input type="submit" value="Modify"
+                           class="bg-pink-600 text-white font-bold rounded py-2 px-4 hover:bg-pink-700 transition duration-300 w-full">
+                </form>
+            </template>
+        </MusicLayout>
+    </div>
 </template>
 
 <script>
@@ -53,23 +56,22 @@ export default {
         MusicLayout,
         Link
     },
-    props: {
-        track: Array,
-        playlist: Object,
-    },
     data() {
         return {
             form: this.$inertia.form({
-                title: this.playlist.title,
+                title: this.track.title,
                 artist: this.track.artist,
                 display: this.track.display ? true : false,
-                track
             })
         }
     },
+    props: {
+        track: Object,
+    },
     methods: {
-        submit() {
-            this.form.put(route('tracks.update', { track: this.track }))
+        edit() {
+            console.log('submit');
+            this.form.put(route('tracks.update', { track: this.track }));
         }
     }
 }

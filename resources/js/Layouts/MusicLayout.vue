@@ -1,106 +1,71 @@
 <template>
-  <div>
-    <nav class="bg-gray-800">
-      <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div class="relative flex h-16 items-center justify-between">
-          <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <!-- Mobile menu button-->
-            <button type="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
-              <span class="absolute -inset-0.5"></span>
-              <span class="sr-only">Open main menu</span>
-              <!--
-                Icon when menu is closed.
-
-                Menu open: "hidden", Menu closed: "block"
-              -->
-              <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-              <!--
-                Icon when menu is open.
-
-                Menu open: "block", Menu closed: "hidden"
-              -->
-              <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div class="flex flex-shrink-0 items-center">
-              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+    <div>
+        <nav class="bg-gradient-to-r from-blue-300 to-pink-300 shadow-lg rounded-lg">
+            <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+                <div class="relative flex h-16 items-center justify-between">
+                    <div class="flex-1 flex justify-center">
+                        <div class="hidden sm:ml-6 sm:block">
+                            <div class="flex space-x-4">
+                                <Link v-if="$page.props.auth.user" :href="route('tracks.index')"
+                                      class="text-white font-bold rounded py-2 px-4 hover:bg-blue-700 hover:text-white transition duration-300"
+                                      :class="[route().current().includes('tracks') ? 'bg-blue-700' : 'bg-blue-500']">
+                                    My Tracks
+                                </Link>
+                                <Link v-if="$page.props.auth.user" :href="route('playlists.index')"
+                                      class="text-white font-bold rounded py-2 px-4 hover:bg-pink-700 hover:text-white transition duration-300"
+                                      :class="[route().current().includes('playlists') ? 'bg-pink-700' : 'bg-pink-500']">
+                                    My Playlists
+                                </Link>
+                                <Link v-if="$page.props.auth.user" :href="route('apikey.index')"
+                                      class="text-white font-bold rounded py-2 px-4 hover:bg-purple-700 hover:text-white transition duration-300"
+                                      :class="[route().current().includes('apikey') ? 'bg-purple-700' : 'bg-purple-500']">
+                                    My API Keys
+                                </Link>
+                                <Link v-if="!$page.props.auth.user" :href="route('login')"
+                                      class="text-white font-bold rounded py-2 px-4 hover:bg-blue-700 hover:text-white transition duration-300"
+                                      :class="[route().current().includes('login') ? 'bg-blue-700' : 'bg-blue-500']">
+                                    Log In
+                                </Link>
+                                <Link v-if="!$page.props.auth.user" :href="route('register')"
+                                      class="text-white font-bold rounded py-2 px-4 hover:bg-pink-700 hover:text-white transition duration-300"
+                                      :class="[route().current().includes('register') ? 'bg-pink-700' : 'bg-pink-500']">
+                                    Register
+                                </Link>
+                                <Link v-if="$page.props.auth.user" as="button" method="POST" :href="route('logout')"
+                                      class="text-white font-bold rounded py-2 px-4 hover:bg-red-700 hover:text-white transition duration-300"
+                                      :class="[route().current().includes('logout') ? 'bg-red-700' : 'bg-red-500']">
+                                    Logout
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="hidden sm:ml-6 sm:block">
-              <div class="flex space-x-4">
-                  <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-
-                  <Link :href="route('tracks.index')"
-                        class="rounded-md px-3 py-2 text-sm font-medium"
-                        :class="[route().current().includes('tracks') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                      Music
-                  </Link>
-
-                  <Link :href="route('playlists.index')"
-                        v-if="$page.props.auth.user"
-                        class="rounded-md px-3 py-2 text-sm font-medium"
-                        :class="[route().current().includes('playlists') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white']">
-                      Playlist
-                  </Link>
-              </div>
+        </nav>
+        <div class="px-8 py-6">
+            <div class="flex justify-between items-center">
+                <h4 class="text-3xl font-bold text-gray-800">
+                    <slot name="title"/>
+                </h4>
+                <div>
+                    <slot name="action"/>
+                </div>
             </div>
-          </div>
-          <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <div class="relative ml-3">
-                  <Link :href="route('login')"
-                        v-if="!$page.props.auth.user"
-                        class="bg-blue-700 rounded-md px-3 py-2 text-sm text-white font-medium">
-                      Log in
-                  </Link>
 
-                  <Link :href="route('register')"
-                        v-if="!$page.props.auth.user"
-                        class="bg-blue-700 rounded-md px-3 py-2 text-sm text-white font-medium">
-                      Sign up
-                  </Link>
-
-                  <Link :href="route('logout')" as="button" method="POST"
-                        v-if="$page.props.auth.user"
-                        class="bg-blue-700 rounded-md px-3 py-2 text-sm text-white font-medium">
-                      Log out
-                  </Link>
-              </div>
-          </div>
+            <div class="mt-4">
+                <slot name="content"/>
+            </div>
         </div>
-      </div>
-
-    </nav>
-
-    <div class="px-16">
-      <div class="flex justify-between items-center">
-        <h4 class="text-3xl font-bold my-6">
-          <slot name="title" />
-        </h4>
-        <div>
-          <slot name="action" />
-        </div>
-      </div>
-
-      <div>
-          <slot name="content" />
-      </div>
     </div>
-
-  </div>
 </template>
 
-
 <script>
-import { Link } from '@inertiajs/vue3';
+import { Link } from "@inertiajs/vue3";
 
-    export default {
-        name: 'MusicLayout',
-        components: {
-            Link
-        },
+export default {
+    name: 'MusicLayout',
+    components: {
+        Link
     }
+}
 </script>

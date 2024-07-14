@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Track extends Model
 {
@@ -20,13 +19,7 @@ class Track extends Model
         'play_count',
     ];
 
-    public function getRouteKeyName()
-    {
+    public function getRouteKeyName() {
         return 'uuid';
-    }
-
-    public function playlists(): BelongsToMany
-    {
-        return $this->belongsToMany(Playlist::class)->withTimestamps();
     }
 }
