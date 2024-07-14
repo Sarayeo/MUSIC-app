@@ -57,3 +57,6 @@ Route::middleware([
 
 
 });
+
+//Il faut reloder deux fois le login pour login 
+// and I don't know why jai des erreurs en rapport avec le middle ware que maintenant 
