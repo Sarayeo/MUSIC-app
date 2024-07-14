@@ -23,5 +23,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::get('/{track}/edit', 'edit')->name('edit');
             Route::put('/{track}', 'update')->name('update');
             Route::delete('/{track}', 'destroy')->name('destroy');
+            // wooow
     });
 });
